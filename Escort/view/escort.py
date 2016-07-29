@@ -6,18 +6,20 @@ import sys
 from flask.ext.admin import AdminIndexView
 from requests import Response
 
+from model.User import User
 from model.helper import generate_time
-
-sys.path.append("..")
-from flask import Flask, request, render_template, redirect, url_for, make_response, jsonify
-from flask_admin import Admin, BaseView, expose
-from flask_admin.contrib.sqla import ModelView
-from flask_httpauth import HTTPBasicAuth
-
 from model.Position import Position
 from model.base import init_db, db_session
 from model.Topic import Topic
 from model.Escort import Escort
+from model.Login import Login
+
+sys.path.append("..")
+from flask import Flask, request, render_template, redirect, url_for, make_response, jsonify, session
+from flask_admin import Admin, BaseView, expose
+from flask_admin.contrib.sqla import ModelView
+from flask_httpauth import HTTPBasicAuth
+
 import wechat
 
 app = Flask(__name__)
@@ -93,23 +95,35 @@ def create_menu():
 
 @app.route('/weixin_index')
 def weixin_index():
-    url = 'https://open.weixin.qq.com/connect/oauth2/authorize?' \
-          'appid=' + wechat.app_id + \
-          '&redirect_uri=' + url_for('index') + \
-          '&response_type=code' \
-          '&scope=' + wechat.scope + \
-          '&state=STATE#wechat_redirect'
-    redirect(url)
+    redirect(wechat.get_weixin_index_url())
 
 
-@app.route('/get_code')
-def get_code():
+@app.route('/login_from_weixin')
+def login_from_weixin():
     code = request.args.get('code')
     if wechat.get_code(code):
         user = wechat.get_userinfo_via_web()
-        # TODO 注册微信用户
+        # TODO 注册微信用户 #13
+        nickname = user['nickname']
+        if user['sex'] == '1':
+            sex = '1'
+        elif user['sex'] == '2':
+            sex = '0'
+        else:
+            sex = '2'
+        openid = user['openid']
+        img_url = user['headimgurl']
+        user = User(nickname=nickname, sex=sex, openid=openid, img_url=img_url, password=openid)
+        try:
+            login = Login(user_id=user.id, login_time=datetime.datetime.now())
+            db_session.add(user)
+            db_session.add(login)
+            db_session.commit()
+            session['user_id'] = user.id
+        except Exception:
+            return redirect(url_for('weixin_index'))
     else:
-        redirect(url_for('weixin_index'))
+        return redirect(url_for('weixin_index'))
 
 
 @app.route('/robot.txt')

@@ -5,6 +5,7 @@ import os
 import sys
 
 import requests
+from flask import url_for
 from wechatpy.exceptions import InvalidSignatureException
 from wechatpy.utils import check_signature
 
@@ -68,3 +69,13 @@ def get_userinfo_via_web():
         return user
     except Exception:
         pass
+
+
+def get_weixin_index_url():
+    url = 'https://open.weixin.qq.com/connect/oauth2/authorize?' \
+          'appid=' + app_id + \
+          '&redirect_uri=' + url_for('index') + \
+          '&response_type=code' \
+          '&scope=' + scope + \
+          '&state=STATE#wechat_redirect'
+    return url
