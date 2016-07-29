@@ -91,9 +91,31 @@ def create_menu():
     # return str(wechat.create_menu(menu_data=menu))
 
 
+@app.route('/weixin_index')
+def weixin_index():
+    url = 'https://open.weixin.qq.com/connect/oauth2/authorize?' \
+          'appid=' + wechat.app_id + \
+          '&redirect_uri=' + url_for('index') + \
+          '&response_type=code' \
+          '&scope=' + wechat.scope + \
+          '&state=STATE#wechat_redirect'
+    redirect(url)
+
+
+@app.route('/get_code')
+def get_code():
+    code = request.args.get('code')
+    if wechat.get_code(code):
+        user = wechat.get_userinfo_via_web()
+        # TODO 注册微信用户
+    else:
+        redirect(url_for('weixin_index'))
+
+
 @app.route('/robot.txt')
 def robot():
     return render_template('robot.txt')
+
 
 @app.route('/wexin', methods=['GET', 'POST', 'OPTION'])
 def wexin():
