@@ -19,10 +19,10 @@
 <!-- 头部star -->
 <div class="m-header">
     <div class="back">
-        <a href="#"><em  class="icon icon-header-back"></em></a>
+        <a href="#"><em class="icon icon-header-back"></em></a>
     </div>
     <div class="close">
-        <a href="#"><em  class="icon icon-header-close"></em></a>
+        <a href="#"><em class="icon icon-header-close"></em></a>
     </div>
     <h1>发镖</h1>
 </div>
@@ -38,12 +38,12 @@
         <div class="item cf">
             <div class="left fl"><em class="icon icon-send-time"></em><span>送达时间</span></div>
             <div class="right fr">
-                <div class="nor bd-time"><span>16:00——17:00</span></div>
+                <div class="nor bd-time"><span>{{ times[0] }}</span></div>
                 <div class="hor">
                     <ul>
-                        <li>17:00——18:00</li>
-                        <li>18:00——19:00</li>
-                        <li>20:00——21:00</li>
+                        {% for time in times %}
+                            <li>{{time}}</li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
@@ -64,7 +64,8 @@
         </div>
     </div>
     <!-- 图片说明 -->
-    <iframe id="upload-img" name="upload-img" src="send_bd_iframe.html" height="120" width="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes">
+    <iframe id="upload-img" name="upload-img" src="send_bd_iframe.html" height="120" width="100%" frameborder="no"
+            border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes">
     </iframe>
     <!-- 服务费 -->
     <div class="m-dartlike-item">
@@ -78,7 +79,7 @@
         <div class="item cf">
             <div class="left fl"><em class="icon icon-send-dasang"></em><span>打赏</span></div>
             <div class="right fr">
-                <div class="nor bd-tip"> <span class="important-color">2.00元</span></div>
+                <div class="nor bd-tip"><span class="important-color">2.00元</span></div>
                 <div class="hor">
                     <ul>
                         <li>3.00元</li>
@@ -135,22 +136,22 @@
 
 <div class="m-pay-submit">
     <div class="left fl">支付：<i class="important-color">2.00元</i></div>
-    <div class="right fl"><input type="submit" id ="pay_submit"value="提交镖单"></div>
+    <div class="right fl"><input type="submit" id="pay_submit" value="提交镖单"></div>
 </div>
 
 <!-- 弹窗start -->
-<div class="m-my-tips-alert-wrap m-alert-wrap m-fail-wrap" >
+<div class="m-my-tips-alert-wrap m-alert-wrap m-fail-wrap">
     <div class="m-close-succeed-alert  m-close-fail-alert">
         <img src="../static/images/alert.png" alt="">
         <h3>OOPS!</h3>
-        <p></p> 
+        <p></p>
     </div>
 </div>
-<div class="m-my-tips-alert-wrap m-alert-wrap m-note-wrap" >
+<div class="m-my-tips-alert-wrap m-alert-wrap m-note-wrap">
     <div class="m-close-succeed-alert">
         <img src="../static/images/up-success.png" alt="">
         <h3>恭喜您</h3>
-        <p></p> 
+        <p></p>
     </div>
 </div>
 <!-- 弹窗end -->

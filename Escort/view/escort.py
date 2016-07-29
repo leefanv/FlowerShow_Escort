@@ -6,6 +6,8 @@ import sys
 from flask.ext.admin import AdminIndexView
 from requests import Response
 
+from model.helper import generate_time
+
 sys.path.append("..")
 from flask import Flask, request, render_template, redirect, url_for, make_response, jsonify
 from flask_admin import Admin, BaseView, expose
@@ -152,7 +154,8 @@ def send_bd():
         except Exception:
             return jsonify({'ok': False})
     if request.method == 'GET':
-        return render_template('send_bd.html')
+        times = generate_time()
+        return render_template('send_bd.html', times=times)
 
 
 @app.route('/article.html')
