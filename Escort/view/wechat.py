@@ -6,6 +6,7 @@ import sys
 
 import requests
 from flask import url_for
+from wechatpy.client.api import WeChatMenu
 from wechatpy.exceptions import InvalidSignatureException
 from wechatpy.utils import check_signature
 
@@ -19,8 +20,6 @@ web_access_token = ''
 refresh_token = ''
 openid = ''
 scope = 'snsapi_userinfo'
-
-
 def get_code(code):
     url = 'https://api.weixin.qq.com/sns/oauth2/access_token?' \
           'appid=' + app_id + \

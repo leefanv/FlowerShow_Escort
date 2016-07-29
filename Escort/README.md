@@ -1,5 +1,7 @@
 # FlowerShow
 #项目依赖
+### [wecahtpy](http://wechatpy.readthedocs.io/zh_CN/master/install.html)
+
 ### [Flask](http://flask.pocoo.org)
 
 ### [Flask-HttpAuth](https://flask-httpauth.readthedocs.io/en/latest/)
@@ -7,8 +9,6 @@
 ### [Flask-Admin](https://flask-admin.readthedocs.io/en/latest/introduction/)
 
 ### [Flask-Cache](http://www.pythondoc.com/flask-cache/#id4)
-
-### [wecaht-sdk](http://wechat-python-sdk.com)
 
 ### [jinjia2](http://docs.jinkan.org/docs/jinja2/templates.html)
 
