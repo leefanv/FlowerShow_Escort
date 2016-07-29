@@ -18,55 +18,22 @@
 <!-- 头部star -->
 <div class="m-header">
     <div class="back">
-        <a href="#"><em  class="icon icon-header-back"></em></a>
+        <a href="#"><em class="icon icon-header-back"></em></a>
     </div>
     <h1>主题列表</h1>
 </div>
 <!-- 头部end -->
 <!-- 镖师中心star -->
 <div class="m-list-opics mt10">
-    <div class="item">
-        <a href="#">
-            <b><em class="icon icon-chaoshi"></em></b>
-            <span>超市</span>
-            <i>超市里面买买买点这里</i>
-        </a>
-    </div>
-    <div class="item">
-        <a href="#">
-            <b><em class="icon icon-shitang"></em></b>
-            <span>食堂</span>
-            <i>小炒盒饭黄焖鸡...</i>
-        </a>
-    </div>
-    <div class="item">
-        <a href="#">
-            <b><em class="icon icon-kuaidi"></em></b>
-            <span>快递</span>
-            <i>包裹点这里</i>
-        </a>
-    </div>
-    <div class="item">
-        <a href="#">
-            <b><em class="icon icon-jiaoshi"></em></b>
-            <span>教室</span>
-            <i>教室东西落下了点这里</i>
-        </a>
-    </div>
-    <div class="item">
-        <a href="#">
-            <b><em class="icon icon-tianping"></em></b>
-            <span>甜品</span>
-            <i>咖啡蛋糕果汁点这里</i>
-        </a>
-    </div>
-    <div class="item">
-        <a href="#">
-            <b><em class="icon icon-other"></em></b>
-            <span>其他</span>
-            <i>@#￥%&点这里</i>
-        </a>
-    </div>
+    {% for item in items %}
+        <div class="item">
+            <a href="#">
+                <b><em class="{{ item.img }}"></em></b>
+                <span>{{ item.title }}</span>
+                <i>{{ item.describe }}</i>
+            </a>
+        </div>
+    {% endfor %}
 </div>
 <!-- 镖师中心end -->
 </body>

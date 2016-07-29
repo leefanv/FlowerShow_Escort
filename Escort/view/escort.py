@@ -339,7 +339,8 @@ def settings():
 @app.route('/topic_list.html')
 def topic_list():
     if request.method == 'GET':
-        return render_template('topic_list.html')
+        items = db_session.query(Topic).all()
+        return render_template('topic_list.html', items=items)
 
 
 if __name__ == '__main__':
