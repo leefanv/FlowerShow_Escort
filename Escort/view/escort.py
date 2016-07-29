@@ -61,19 +61,6 @@ def get_password(username):
     return None
 
 
-@app.route('/test', methods=['POST', 'GET'])
-def test():
-    return jsonify({'data': True})
-
-
-@app.route('/position')
-def position():
-    json = []
-    for posi in db_session.query(Position).all():
-        json.append(posi.serializer())
-    return jsonify({"data": json})
-
-
 @app.route('/create_menu', methods=['GET'])
 def create_menu():
     menu = {
@@ -103,6 +90,10 @@ def create_menu():
     }
     # return str(wechat.create_menu(menu_data=menu))
 
+
+@app.route('/robot.txt')
+def robot():
+    return render_template('robot.txt')
 
 @app.route('/wexin', methods=['GET', 'POST', 'OPTION'])
 def wexin():
