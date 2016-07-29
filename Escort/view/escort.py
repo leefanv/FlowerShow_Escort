@@ -59,6 +59,11 @@ def get_password(username):
     return None
 
 
+@app.route('/test', methods=['POST', 'GET'])
+def test():
+    return jsonify({'data': True})
+
+
 @app.route('/position')
 def position():
     json = []
@@ -123,26 +128,29 @@ def send_bd():
     """
     if request.method == 'POST':
         # 从请求json中创建变量
-        data = request.get_json()
-        topic = data['topic']
-        time = data['time']
-        name = data['name']
-        phone = data['phone']
-        address = data['address']
-        information = data['information']
-        fee = data['fee']
-        tip = data['tip']
-        pay_index = data['pay_index']
-        progress = Escort.Progress_Enum.on
-        # FIXME 未做任何判断直接生成escort
-        escort = Escort(topic=topic, name=name,
-                        phone=phone, address=address,
-                        time=time,
-                        information=information, fee=fee,
-                        tip=tip, pay_index=pay_index, progress=progress)
-        db_session.add(escort)
-        db_session.commit()
-        return jsonify({'rest': 'ok'})
+        try:
+            data = request.get_json()
+            topic = data['topic']
+            time = data['time']
+            name = data['name']
+            phone = data['phone']
+            address = data['address']
+            information = data['information']
+            fee = data['fee']
+            tip = data['tip']
+            pay_index = data['pay_index']
+            progress = Escort.Progress_Enum.on
+            # FIXME 未做任何判断直接生成escort
+            escort = Escort(topic=topic, name=name,
+                            phone=phone, address=address,
+                            time=time,
+                            information=information, fee=fee,
+                            tip=tip, pay_index=pay_index, progress=progress)
+            db_session.add(escort)
+            db_session.commit()
+            return jsonify({'ok': True})
+        except Exception:
+            return jsonify({'ok': False})
     if request.method == 'GET':
         return render_template('send_bd.html')
 
