@@ -1,7 +1,9 @@
 # coding: utf-8
 import datetime
+import functools
 import json
 import sys
+from os import abort
 
 from flask.ext.admin import AdminIndexView
 from requests import Response
@@ -44,6 +46,44 @@ admin = Admin(app, index_view=MyHomeView())
 admin.add_view(ModelView(Escort, db_session))
 admin.add_view(ModelView(Topic, db_session))
 admin.add_view(ModelView(Position, db_session))
+
+
+def oauth(method):
+    @functools.wraps(method)
+    def warpper(*args, **kwargs):
+        code = request.args.get('code', None)
+        url = wechat.WeChatOAuth(wechat.app_id, wechat.app_secret, request.url, scope=wechat.scope).authorize_url
+        if code:
+            try:
+                token = wechat.WeChatOAuth.fetch_access_token(code)
+                user = wechat.WeChatOAuth.get_user_info(openid=wechat.WeChatOAuth.open_id,access_token=token)
+            except Exception:
+                abort(403)
+            else:
+                nickname = user['nickname']
+                if user['sex'] == '1':
+                    sex = '1'
+                elif user['sex'] == '2':
+                    sex = '0'
+                else:
+                    sex = '2'
+                openid = user['openid']
+                img_url = user['headimgurl']
+                user = User(nickname=nickname, sex=sex, openid=openid, img_url=img_url, password=openid)
+                try:
+                    login = Login(user_id=user.id, login_time=datetime.datetime.now())
+                    db_session.add(user)
+                    db_session.add(login)
+                    db_session.commit()
+                    session['user_id'] = user.id
+                except Exception:
+                    abort(403)
+        else:
+            return redirect(url)
+
+        return method(*args, **kwargs)
+
+    return warpper
 
 
 @app.before_first_request
@@ -93,39 +133,6 @@ def create_menu():
     # return str(wechat.create_menu(menu_data=menu))
 
 
-@app.route('/weixin_index')
-def weixin_index():
-    redirect(wechat.get_weixin_index_url())
-
-
-@app.route('/login_from_weixin')
-def login_from_weixin():
-    code = request.args.get('code')
-    if wechat.get_code(code):
-        user = wechat.get_userinfo_via_web()
-        # TODO 注册微信用户 #13
-        nickname = user['nickname']
-        if user['sex'] == '1':
-            sex = '1'
-        elif user['sex'] == '2':
-            sex = '0'
-        else:
-            sex = '2'
-        openid = user['openid']
-        img_url = user['headimgurl']
-        user = User(nickname=nickname, sex=sex, openid=openid, img_url=img_url, password=openid)
-        try:
-            login = Login(user_id=user.id, login_time=datetime.datetime.now())
-            db_session.add(user)
-            db_session.add(login)
-            db_session.commit()
-            session['user_id'] = user.id
-        except Exception:
-            return redirect(url_for('weixin_index'))
-    else:
-        return redirect(url_for('weixin_index'))
-
-
 @app.route('/robot.txt')
 def robot():
     return render_template('robot.txt')
@@ -150,6 +157,7 @@ def wexin():
 
 #####   TODO web goes here
 @app.route('/send_bd.html', methods=['POST', 'GET'])
+@oauth
 def send_bd():
     """"
     version:0.0.1
@@ -265,6 +273,7 @@ def go_refund():
 
 @app.route('/')
 @app.route('/index.html')
+@oauth
 def index():
     if request.method == 'GET':
         return render_template('index.html')
