@@ -53,33 +53,29 @@ def oauth(method):
     @functools.wraps(method)
     def warpper(*args, **kwargs):
         code = request.args.get('code', None)
-        url = wechat.WeChatOAuth(wechat.app_id, wechat.app_secret, request.url, scope=wechat.scope).authorize_url
-        if code:
-            try:
-                token = wechat.WeChatOAuth.fetch_access_token(code)
-                user = wechat.WeChatOAuth.get_user_info(openid=wechat.WeChatOAuth.open_id, access_token=token)
-            except Exception:
-                # FIXME 登录 403
-                abort(403)
+        mOauth = wechat.WeChatOAuth(wechat.app_id, wechat.app_secret, request.url, scope=wechat.scope)
+        url = mOauth.authorize_url
+        if code is not None:
+            mOauth.fetch_access_token(code)
+            user = mOauth.get_user_info(openid=mOauth.open_id, access_token=mOauth.access_token)
+            nickname = user['nickname']
+            if user['sex'] == '1':
+                sex = '1'
+            elif user['sex'] == '2':
+                sex = '0'
             else:
-                nickname = user['nickname']
-                if user['sex'] == '1':
-                    sex = '1'
-                elif user['sex'] == '2':
-                    sex = '0'
-                else:
-                    sex = '2'
-                openid = user['openid']
-                img_url = user['headimgurl']
-                user = User(nickname=nickname, sex=sex, openid=openid, img_url=img_url, password=openid)
-                try:
-                    login = Login(user_id=user.id, login_time=datetime.datetime.now())
-                    db_session.add(user)
-                    db_session.add(login)
-                    db_session.commit()
-                    session['user_id'] = user.id
-                except Exception:
-                    abort(403)
+                sex = '2'
+            openid = user['openid']
+            img_url = user['headimgurl']
+            user = User(nickname=nickname, sex=sex, openid=openid, img_url=img_url, password=openid)
+            try:
+                login = Login(user_id=user.id, login_time=datetime.datetime.now())
+                db_session.add(user)
+                db_session.add(login)
+                db_session.commit()
+                session['user_id'] = user.id
+            except Exception:
+                abort(403)
         else:
             return redirect(url)
 
