@@ -3,21 +3,21 @@ import datetime
 import functools
 import json
 import sys
-from os import abort
+
+sys.path.append("..")
 
 from flask.ext.admin import AdminIndexView
 from requests import Response
 
-from model.User import User
+from model.user import User
 from model.helper import generate_time
 from model.Position import Position
 from model.base import init_db, db_session
 from model.Topic import Topic
 from model.Escort import Escort
-from model.Login import Login
+from model.login import Login
 
-sys.path.append("..")
-from flask import Flask, request, render_template, redirect, url_for, make_response, jsonify, session
+from flask import Flask, request, render_template, redirect, url_for, make_response, jsonify, session, abort
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_httpauth import HTTPBasicAuth
@@ -91,6 +91,7 @@ def oauth(method):
 def init_database():
     # init_db()
     pass
+
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
