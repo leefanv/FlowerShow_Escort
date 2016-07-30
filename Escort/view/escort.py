@@ -9,13 +9,13 @@ sys.path.append("..")
 from flask.ext.admin import AdminIndexView
 from requests import Response
 
-from model.user import User
-from model.helper import generate_time
+from model.User import User
+from model.Helper import generate_time
 from model.Position import Position
-from model.base import init_db, db_session
+from model.Base import init_db, db_session
 from model.Topic import Topic
 from model.Escort import Escort
-from model.login import Login
+from model.Login import Login
 
 from flask import Flask, request, render_template, redirect, url_for, make_response, jsonify, session, abort
 from flask_admin import Admin, BaseView, expose

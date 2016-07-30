@@ -5,7 +5,7 @@ import enum
 from sqlalchemy import Column, Integer, String, Text, Boolean, Float, DateTime, Enum
 from sqlalchemy.orm import relationship
 
-from model.base import Base
+from model.Base import Base
 
 
 class Escort(Base):

@@ -14,7 +14,7 @@ Base.query = db_session.query_property()
 
 
 def init_db():
-    from model import Escort, Topic, Position, user, login
+    from model import Escort, Topic, Position, User, Login
     Base.metadata.create_all(bind=engine)
     # testing data goes here...
     topics = [
