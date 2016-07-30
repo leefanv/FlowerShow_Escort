@@ -45,7 +45,8 @@ class MyHomeView(AdminIndexView):
 admin = Admin(app, index_view=MyHomeView())
 admin.add_view(ModelView(Escort, db_session))
 admin.add_view(ModelView(Topic, db_session))
-admin.add_view(ModelView(Position, db_session))
+admin.add_view(ModelView(User, db_session))
+admin.add_view(ModelView(Login, db_session))
 
 
 def oauth(method):
@@ -56,7 +57,7 @@ def oauth(method):
         if code:
             try:
                 token = wechat.WeChatOAuth.fetch_access_token(code)
-                user = wechat.WeChatOAuth.get_user_info(openid=wechat.WeChatOAuth.open_id,access_token=token)
+                user = wechat.WeChatOAuth.get_user_info(openid=wechat.WeChatOAuth.open_id, access_token=token)
             except Exception:
                 abort(403)
             else:
@@ -88,8 +89,8 @@ def oauth(method):
 
 @app.before_first_request
 def init_database():
-    init_db()
-
+    # init_db()
+    pass
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
