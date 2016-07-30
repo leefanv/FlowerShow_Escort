@@ -59,6 +59,7 @@ def oauth(method):
                 token = wechat.WeChatOAuth.fetch_access_token(code)
                 user = wechat.WeChatOAuth.get_user_info(openid=wechat.WeChatOAuth.open_id, access_token=token)
             except Exception:
+                # FIXME 登录 403
                 abort(403)
             else:
                 nickname = user['nickname']
