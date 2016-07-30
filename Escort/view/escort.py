@@ -107,31 +107,30 @@ def get_password(username):
 @app.route('/create_menu', methods=['GET'])
 def create_menu():
     menu = {
-        "button": [
+        u'button': [
             {
-                "name": "选择服务",
-                "sub_button": [
+                u'name': u'选择服务',
+                u'sub_button': [
                     {
-                        "type": "view",
-                        "name": "校园镖局",
-                        "url": "http://seize.space:8085/"
+                        u'type': u'view',
+                        u'name': u'校园镖局',
+                        u'url': u'http://www.huacaoxiu.com'
                     },
                     {
-                        "type": "view",
-                        "name": "下载客户端",
-                        "url": "http://seize.space"
+                        u'type': u'view',
+                        u'name': u'下载客户端',
+                        u'url': u'http://www.huacaoxiu.com'
                     },
                 ]
             },
-
             {
-                "name": "个人中心",
-                "type": "view",
-                "url": "http://seize.space"
+                u'name': u'个人中心',
+                u'type': u'view',
+                u'url': u'http://www.huacaoxiu.com/my.html'
             }
         ]
     }
-    # return str(wechat.create_menu(menu_data=menu))
+    return str(wechat.client.menu.create(menu_data=menu))
 
 
 @app.route('/robot.txt')
