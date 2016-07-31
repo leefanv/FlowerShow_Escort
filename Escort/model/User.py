@@ -1,23 +1,26 @@
+# coding:utf-8
 from sqlalchemy import Column, Integer, String, Text, Boolean, Float, DateTime, Enum
 from sqlalchemy.orm import relationship
 
-from model.Base import Base
 from passlib.apps import custom_app_context as pwd_context
+
+from model.Base import Base
 
 
 class User(Base):
     class SEX_CHOICE():
-        FEMALE = '0'
-        MALE = '1'
-        UNKNOWN = '2'
+        FEMALE = 'female'
+        MALE = 'male'
+        UNKNOWN = 'unknown'
 
     class ROLE_CHOICE():
-        normal = '0'
-        escort = '1'
+        normal = 'normal'
+        escort = 'escort'
 
     __tablename__ = 'User'
     id = Column(Integer, primary_key=True)
-    nickname = Column(String(10))
+    telephone = Column(String(15))
+    nickname = Column(String(20))
     sex = Column('sex', Enum(SEX_CHOICE.FEMALE, SEX_CHOICE.MALE, SEX_CHOICE.UNKNOWN))
     img_url = Column(String(5000))
     community = Column(String(500))
@@ -25,8 +28,11 @@ class User(Base):
     password = Column(String(1000))
     role = Column('role', Enum(ROLE_CHOICE.normal, ROLE_CHOICE.escort))
 
-    def __init__(self, role=None, nickname=None, sex=None, img_url=None, community=None, openid=None, password=None):
+    def __init__(self, role=None, nickname=None, telephone=u'请输入手机号', sex=None, img_url=None, community=u'请输入所在社区',
+                 openid=None,
+                 password=None):
         self.role = role
+        self.telephone = telephone
         self.nickname = nickname
         self.sex = sex
         self.img_url = img_url
@@ -36,3 +42,7 @@ class User(Base):
 
     def pwd_verify(self, password):
         return pwd_context.verify(password, self.id)
+
+    def update_info(self, **kwargs):
+        # FIXME 更新用户信息
+        return None

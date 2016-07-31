@@ -60,22 +60,31 @@ def oauth(method):
             user = mOauth.get_user_info(openid=mOauth.open_id, access_token=mOauth.access_token)
             nickname = user['nickname']
             if user['sex'] == '1':
-                sex = '1'
+                sex = User.SEX_CHOICE.MALE
             elif user['sex'] == '2':
-                sex = '0'
+                sex = User.SEX_CHOICE.FEMALE
             else:
-                sex = '2'
+                sex = User.SEX_CHOICE.UNKNOWN
             openid = user['openid']
             img_url = user['headimgurl']
-            user = User(nickname=nickname, sex=sex, openid=openid, img_url=img_url, password=openid)
-            try:
-                login = Login(user_id=user.id, login_time=datetime.datetime.now())
+            session_id = session.get('user_id', None)
+            if session_id != openid or None:
+                user = db_session.query(User).filter(User.openid == openid).first()
+                if user is None:
+                    user = User(nickname=nickname, sex=sex, openid=openid, img_url=img_url, password=openid,
+                                role=User.ROLE_CHOICE.normal)
+                # User.update_info(nickname=nickname, sex=sex, openid=openid, img_url=img_url, password=openid,
+                #                  role=User.ROLE_CHOICE.normal)
+                login = Login(user_id=openid, login_time=datetime.datetime.now())
                 db_session.add(user)
                 db_session.add(login)
                 db_session.commit()
-                session['user_id'] = user.id
-            except Exception:
-                abort(403)
+                session['user_id'] = openid
+            elif session_id == openid:
+                login = Login(user_id=openid, login_time=datetime.datetime.now())
+                db_session.add(login)
+                db_session.commit()
+                session['user_id'] = openid
         else:
             return redirect(url)
 
@@ -86,8 +95,7 @@ def oauth(method):
 
 @app.before_first_request
 def init_database():
-    # init_db()
-    pass
+    init_db(test_data=False)
 
 
 @app.teardown_appcontext
@@ -112,19 +120,19 @@ def create_menu():
                     {
                         u'type': u'view',
                         u'name': u'校园镖局',
-                        u'url': u'http://www.huacaoxiu.com'
+                        u'url': u'http://www.huacaoxiu.com/index_from_wechat'
                     },
                     {
                         u'type': u'view',
                         u'name': u'下载客户端',
-                        u'url': u'http://www.huacaoxiu.com'
+                        u'url': u'http://www.huacaoxiu.com/index_from_wechat'
                     },
                 ]
             },
             {
                 u'name': u'个人中心',
                 u'type': u'view',
-                u'url': u'http://www.huacaoxiu.com/my.html'
+                u'url': u'http://www.huacaoxiu.com/my_from_wechat'
             }
         ]
     }
@@ -153,9 +161,20 @@ def wexin():
         return 'you are not wechat ,fuck off'
 
 
+@app.route('/index_from_wechat')
+@oauth
+def index_from_wechat():
+    return redirect(url_for('index'))
+
+
+@app.route('/my_from_wechat')
+@oauth
+def my_from_wechat():
+    return redirect(url_for('my'))
+
+
 #####   TODO web goes here
 @app.route('/send_bd.html', methods=['POST', 'GET'])
-@oauth
 def send_bd():
     """"
     version:0.0.1
@@ -271,7 +290,6 @@ def go_refund():
 
 @app.route('/')
 @app.route('/index.html')
-@oauth
 def index():
     if request.method == 'GET':
         return render_template('index.html')
@@ -381,4 +399,4 @@ def topic_list():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
