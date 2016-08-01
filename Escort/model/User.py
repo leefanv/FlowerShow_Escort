@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 from passlib.apps import custom_app_context as pwd_context
 
+from model.Address import Address
 from model.Base import Base
 
 
@@ -28,6 +29,8 @@ class User(Base):
     password = Column(String(1000))
     role = Column('role', Enum(ROLE_CHOICE.normal, ROLE_CHOICE.escort))
 
+    addresses = relationship('Address', order_by=Address.id, back_populates='user')
+
     def __init__(self, role=None, nickname=None, telephone=u'请输入手机号', sex=None, img_url=None, community=u'请输入所在社区',
                  openid=None,
                  password=None):
@@ -41,7 +44,7 @@ class User(Base):
         self.password = pwd_context.encrypt(password)
 
     def pwd_verify(self, password):
-        return pwd_context.verify(password, self.id)
+        return pwd_context.verify(unichr(password), self.id)
 
     def update_info(self, **kwargs):
         # FIXME 更新用户信息

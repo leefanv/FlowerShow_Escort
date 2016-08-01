@@ -11,7 +11,7 @@ from requests import Response
 
 from model.User import User
 from model.Helper import generate_time
-from model.Position import Position
+from model.Address import Address
 from model.Base import init_db, db_session
 from model.Topic import Topic
 from model.Escort import Escort
@@ -47,6 +47,7 @@ admin.add_view(ModelView(Escort, db_session))
 admin.add_view(ModelView(Topic, db_session))
 admin.add_view(ModelView(User, db_session))
 admin.add_view(ModelView(Login, db_session))
+admin.add_view(ModelView(Address, db_session))
 
 
 def oauth(method):
@@ -207,7 +208,14 @@ def send_bd():
             return jsonify({'ok': False})
     if request.method == 'GET':
         times = generate_time()
-        return render_template('send_bd.html', times=times)
+        try:
+            user_id = session['user_id']
+            user = db_session.query(User).filter(user_id == user_id).first()
+            address = db_session.query(Address).filter(Address.user == user).all()
+        except Exception:
+            # FIXME need return some
+            address = None
+        return render_template('send_bd.html', times=times, address=address)
 
 
 @app.route('/article.html')
@@ -328,7 +336,8 @@ def my_info():
 @app.route('/my_location.html')
 def my_location():
     if request.method == 'GET':
-        return render_template('my_location.html')
+        addresses = db_session.query(Address).all()
+        return render_template('my_location.html', addresses=addresses)
 
 
 @app.route('/my_location_edit.html')
@@ -399,4 +408,4 @@ def topic_list():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True)
